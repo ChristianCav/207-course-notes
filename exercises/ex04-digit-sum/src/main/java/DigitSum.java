@@ -21,7 +21,14 @@ public class DigitSum {
      * @return the sum of its decimal digits
      */
     public static int digitSum(int n) {
-        // TODO: complete
-        return 0;
+        int i = 0;
+        int total = 0;
+        String num = Integer.toString(Math.abs(n));
+        while(i < num.length()){
+            char charDigit = num.charAt(i);
+            total += Character.getNumericValue(charDigit);
+            i++;
+        }
+        return total;
     }
 }
