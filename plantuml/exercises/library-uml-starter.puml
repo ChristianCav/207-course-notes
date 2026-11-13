@@ -20,12 +20,90 @@ hide empty members
 ' (Putting the parent/interface on the LEFT of the arrow keeps it on top, which
 '  is the convention used in these notes.)
 
+interface Borrowable {
+  + getLoanPeriodDays() : int
+  + isOnLoan() : boolean
+  + checkOut(member : Member) : void
+  + returnItem() : void
+  + addHold(hold : Hold) : void
+}
+
 abstract class Item {
   - title : String
   - catalogueNumber : String
   + getTitle() : String
   + getCatalogueNumber() : String
 }
+
+class ReferenceItem {
+}
+
+class LoanableItem {
+  - loanPeriodDays : int
+  - dueDate : LocalDate
+  - currentBorrower : Member
+  + getLoanPeriodDays() : int
+  + isOnLoan() : boolean
+  + checkOut(member : Member) : void
+  + returnItem() : void
+  + addHold(hold : Hold) : void
+}
+
+class Book {
+  + getLoanPeriodDays() : int
+}
+
+class DVD {
+  + getLoanPeriodDays() : int
+}
+
+abstract class User {
+  - id : String
+  - name : String
+  + getId() : String
+  + login(credential : String) : boolean
+}
+
+class Member {
+  - lateFee : double
+  + borrow(item : Borrowable) : void
+  + placeHold(item : Borrowable) : Hold
+  + getLateFee() : double
+  + waiveLateFee() : void
+}
+
+class Librarian {
+  + addItem(library : Library, item : Item) : void
+  + waiveLateFee(member : Member) : void
+}
+
+class Hold {
+  - placedAt : LocalDateTime
+  + getMember() : Member
+  + getItem() : Borrowable
+}
+
+class Library {
+  + addItem(item : Item) : void
+  + findItem(catalogueNumber : String) : Item
+}
+
+' Inheritance & Realization
+Item <|-- ReferenceItem
+Item <|-- LoanableItem
+Borrowable <|.. LoanableItem
+LoanableItem <|-- Book
+LoanableItem <|-- DVD
+
+User <|-- Member
+User <|-- Librarian
+
+' Associations
+Library "1" o-- "*" Item : catalogue
+Library "1" o-- "*" User : users
+Member "1" -- "*" Hold : places
+Hold "*" --> "1" Borrowable : reserves
+Member "0..1" -- "*" LoanableItem : borrows
 
 ' TODO: add boxes for Book and DVD. What differs between them — a whole class,
 '       or just the value of a loan-period field?
